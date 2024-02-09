@@ -1,0 +1,115 @@
+Lab 01
+Objectives:
+The purpose of the first lab of DBS311 is to review all DML statements learnt from DBS211
+Preface:
+If you have not already done so, you will need to download the sample database creation script from blackboard and run it.  These instructions are included in the Lab00 - Getting Started with SQL Developer document.
+LAB 01 - SUBMISSION
+Explore the Database
+Answer the following questions in the SQL Developer Worksheet area and submit a Word document capturing the screenshots of the SQL results.
+•	Your Header of the Word file should include FULL NAME, STUDENT ID and EMAIL.
+•	The first screenshot of this lab should include the screenshot of your database login settings of your login information screen and the tables created.
+•	The following questions in your Word document should have the question, followed by the statement used or the answer in words and if it has a result in SQL Developer please paste the screenshot. Use a snipping tool to capture the results from Oracle SQL Developer. Marks will be reduced if there is no screenshots of your query results.
+In the connections window, expand Tables.
+
+1)	Paste the screenshot of your database connection. How many tables have been created? List the names of the created tables.
+ 
+8 TABLES CREATED
+
+
+2)	Write a SELECT query to display order number and product code for order line numbers 1,3,5 from orderdetails table 
+
+SELECT orderNumber, productCode
+FROM orderdetails
+WHERE orderLineNumber IN (1, 3, 5);
+ 
+
+3)	Write a SQL statement to display DISTINCT credit limit for the RetailCustomers table. 
+
+SELECT DISTINCT creditLimit
+FROM RetailCustomers;
+ 
+
+4)	Using Integrity constraints tab for each table. Write down the primary keys for each table and write down the foreign keys and its parent table in the following structure
+
+Table Name	Primary Key fieldname	Foreignkey fieldname(Parent table name)
+RETAILEMPLOYEES	EMPLOYEENUMBER	OFFICECODE(RETAILOFFICES), REPORTSTO(RETAILEMPLOYEES)
+ORDERDETAILS	PRODUCTCODE
+ORDERNUMBER	PRODUCTCODE
+ORDERNUMBER
+PRODUCTLINE	PRODUCTLINE	            -
+RETAILCUSTOMERS	CUSTOMERNUMBER	SALESREPEMPLOYEENUMBER
+RETAILOFFICES	OFFICECODE	             -
+RETAILORDERS	ORDERNUMBER	CUSTOMERNUMBER
+RETAILPAYMENTS	CUSTOMERNUMBER
+CHECKNUMBER	CUSTOMERNUMBER
+RETAILPRODUCTS	PRODUCTCODE	PRODUCTLINE
+
+5)	INSERT 2 rows of values to RetailPayments table. Makeup your own values and display the newly entered information.
+
+INSERT INTO RetailPayments (PaymentID, CustomerID, Amount, PaymentDate)
+VALUES 
+    (101, 1001, 50.00, '2023-09-12'),
+    (102, 1002, 75.00, '2023-09-13');
+
+-- Display the newly entered information
+SELECT * FROM RetailPayments;
+ 
+
+6)	Create an empty new RETAILEMPLOYEES table called “UpdatedEmployees” from the existing EMPLOYEE table. Display the contents of UpdatedEmployees. Now copy all the values from EMPLOYEE table to UpdatedEmployees and display the contents.
+-- Step 1: Create an empty table called "UpdatedEmployees"
+
+CREATE TABLE UpdatedEmployees (
+    Employeenumber INT PRIMARY KEY,
+    lastname VARCHAR(50),
+    firstname VARCHAR(50),
+    extension VARCHAR(10),
+    email VARCHAR(100),
+    officecode VARCHAR(10),
+    reportsto INT,
+    jobtitle VARCHAR(50)
+);
+-- Step 2: Display the contents of UpdatedEmployees
+SELECT * FROM UpdatedEmployees;
+-- Step 3: Copy values from RETAILEMPLOYEES to UpdatedEmployees
+INSERT INTO UpdatedEmployees (Employeenumber, lastname, firstname, extension, email, officecode, reportsto, jobtitle)
+SELECT Employeenumber, lastname, firstname, extension, email, officecode, reportsto, jobtitle
+FROM RETAILEMPLOYEES;
+-- Step 4: Display the contents of UpdatedEmployees
+SELECT * FROM UpdatedEmployees;
+ 
+
+7)	Write a SQL query to update UpdatedEmployees with 2 new columns Salary and Department.
+
+ALTER TABLE UpdatedEmployees
+ADD (Salary NUMBER(10, 2),  
+     Department VARCHAR2(255));
+ 
+
+8)	Delete the newly inserted columns in UpdatedEmployees table 
+
+ALTER TABLE UpdatedEmployees
+DROP COLUMN Salary;
+
+ALTER TABLE UpdatedEmployees
+DROP COLUMN Department;
+ 
+
+9)	Using JOIN statements write the SQL query for the following data required. 
+
+a.	Display all ORDERDETAILS that are in common with RetailOrders
+
+
+SELECT *
+FROM ORDERDETAILS
+INNER JOIN RETAILORDERS ON ORDERDETAILS.ordernumber = RETAILORDERS.ordernumber;
+ 
+
+10)	Using JOIN statements write the SQL query for the following data required
+
+a.	Display all the ORDERDETAILS that are not in common with RetailProducts
+
+SELECT *
+FROM ORDERDETAILS
+LEFT JOIN RetailProducts ON ORDERDETAILS.productcode = RetailProducts.productcode
+WHERE RetailProducts.productcode IS NULL;
+ 
