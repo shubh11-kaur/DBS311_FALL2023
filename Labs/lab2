@@ -1,0 +1,142 @@
+Lab 02
+Objectives:
+The purpose of this lab is to familiarize you with tables and date and single-line operations
+
+LAB 02 – SUBMISSION
+You will be submitting a Word document with the questions listed followed by the answers with the SQL queries and screenshots of the results.
+
+In the Word document header you should have your Name, Student ID number, section. 
+
+QUESTION 1
+•	Find how many weeks an order has been placed at the company? Display the result with “CustomerName” of the customer who placed the order, ordernumber, customernumber and “Weeks Ordered” as second column
+
+SELECT 
+    c.customername AS CustomerName,
+    o.ordernumber AS OrderNumber,
+    o.customernumber AS CustomerNumber,
+    (sysdate-o.orderdate)/7 AS WeeksOrdered
+FROM 
+    retailorders o
+JOIN
+    retailcustomers c ON o.customernumber = c.customernumber;
+ 
+
+QUESTION 2
+•	Most of the payments in retailpayment are recurring and are in a 30 day payment cycle. Find out the next payment date for each retailpayment. Display the result with “CheckNumber” , “PaymentDate and “Next Payment Date” as third column and “Previous Payment Date” as fourth column. Try 'fmDdspth "of" Month  YYYY   fmHH:MI' for paymentdate and 'fmMM/DD/YY' for previous,next order dates.
+
+SELECT 
+    CheckNumber,
+    TO_CHAR(Paymentdate, 'fmDdspth "of" Month YYYY fmHH:MI') as FormattedPaymentDate,
+    TO_CHAR(Paymentdate + 30, 'fmDdspth "of" Month YYYY fmHH:MI') as NextPaymentDate,
+    TO_CHAR(Paymentdate - 30 , 'fmMM/DD/YY') as PreviousPaymentDate
+FROM 
+    retailpayments;
+
+ 
+QUESTION 3
+
+•	Using Case manipulation and Character Manipulation Functions, display all the product names from retailproducts that ends with “s” or with “r” or  with “p” (Do not use LIKE operator)
+
+SELECT 
+    productname
+FROM retailproducts
+WHERE 
+    UPPER(SUBSTR(productname, -1)) IN ('S', 'R', 'P');
+ 
+
+QUESTION 4
+
+•	A. Using round(), trunc(), floor() display the buyprice for retailproducts table 
+
+SELECT 
+    productname,
+    buyprice,
+    ROUND(buyprice, 2) AS rounded_buy_price,
+    TRUNC(buyprice, 0) AS truncated_buy_price,
+    FLOOR(buyprice) AS floored_buy_price
+FROM retailproducts;
+ 
+•	B. Using lapd() function to display the customernumber in retailcustomers table totalling 10 characters using “*” to fill in the rest of the characters (an example would be ********103) 
+
+SELECT 
+    LPAD(customernumber, 10, '*') AS padded_customernumber
+FROM retailcustomers;
+ 
+QUESTION 5
+•	Using substr(i,n) function display the characters from the third letter in the firstname and lastnames of the retailemployees
+
+SELECT 
+    SUBSTR(firstname, 3) AS firstname_from_3rd_char,
+    SUBSTR(lastname, 3) AS lastname_from_3rd_char
+FROM retailemployees;
+ 
+QUESTION 6
+•	Using NEXT_DAY(), LAST_DAY() functions display the next “SUNDAY” from the order date and the last day of the month in the order date in retailorders table
+
+SELECT
+    order_date,
+    NEXT_DAY(order_date, 'SUNDAY') AS next_sunday,
+    LAST_DAY(order_date) AS last_day_of_month
+FROM retailorders;
+ 
+QUESTION 7
+
+•	Using ADD_MONTHS() function, add 3 months order shipped date in retailorder table and display the results with ordernumber, shipped date and “3months added” column to the result
+
+SELECT 
+    ordernumber,
+    shippeddate,
+    ADD_MONTHS(shippeddate, 3) AS three_months_added
+FROM retailorders;
+ 
+QUESTION 8
+
+•	Using MONTHS_BETWEEN () function, find the number of months from payment date in retailpayments table to todays date and  display the results with customernumber, customer name, , paymentdate and “#months” column \
+
+SELECT 
+    c.customernumber,
+    c.customername,
+    p.paymentdate,
+    MONTHS_BETWEEN(SYSDATE, p.paymentdate) AS months_difference
+FROM retailpayments p
+JOIN retailcustomers c ON p.customernumber = c.customernumber;
+ 
+QUESTION 9
+•	Write  a SQL query to create a table name customersCOPY as a replica of Retailcustomers table, do the following string operations
+o	A.  Display the integer value of the letter ‘C’ in all Customers Name. Example 6 for ‘Mini Classics’
+
+SELECT CUSTOMERNAME ,
+INSTR(CUSTOMERNAME , 'C') AS INTEGERVALUEOFC
+FROM customersCOPY;
+ 
+o	B.  Display the customers name by trimming letter ‘S’ for all customers names that begin with a ‘S’  Example: ‘SAR Distributors, Co’ to ‘AR Distributors, Co’
+
+SELECT CUSTOMERNAME, TRIM( 'S' FROM customername)as newname
+FROM customersCOPY
+WHERE CUSTOMERNAME LIKE 'S%'  ;
+ 
+QUESTION 10
+Give atleast 2 examples of  SQL query and results of using NULL functions given below for a character column and a date column. Use Google for your reference.
+
+1.NVL Function:
+Example with Character Column:
+
+SELECT 
+    productname,
+    NVL(productdescription, 'No description available') AS description
+FROM retailproducts;
+ 
+2. NVL2 Function:
+
+Example with Date Column:
+
+SELECT 
+    ordernumber,
+    orderdate,
+    NVL2(shippeddate, 'Shipped', 'On Hold') AS shipping_status
+FROM retailorders;
+
+ 
+
+
+
