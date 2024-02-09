@@ -1,0 +1,106 @@
+
+SET SERVEROUTPUT ON;
+
+CREATE OR REPLACE PROCEDURE insert_new_payment AS
+BEGIN
+    INSERT INTO Payments (
+        PaymentID,
+        ResidentID,
+        PaymentType,
+        Amount,
+        PaymentDate
+    )
+    VALUES (
+        21, -- Replace with actual PaymentID value
+        101, -- Replace with actual ResidentID value
+        'Rent', -- Replace with actual PaymentType value
+        500.00, -- Replace with actual Amount value
+        TO_DATE('2023-11-07', 'YYYY-MM-DD') -- Replace with actual PaymentDate value
+    );
+
+    DBMS_OUTPUT.PUT_LINE('New payment added successfully.');
+EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Error adding new payment: ' || SQLERRM);
+END insert_new_payment;
+/
+
+BEGIN
+    insert_new_payment;
+END;
+/
+
+/********UPDATE*******/
+
+CREATE OR REPLACE PROCEDURE spPaymentsUpdate IS
+BEGIN
+    UPDATE Payments
+    SET Amount = 1000.00
+    WHERE PaymentID = 1; -- Change the condition as per your requirement
+    
+    IF SQL%ROWCOUNT > 0 THEN
+        DBMS_OUTPUT.PUT_LINE('Payment with PaymentID 1 has been updated.');
+        
+        -- Display the updated fields for the payment
+        DBMS_OUTPUT.PUT_LINE('PaymentID: 1');
+        DBMS_OUTPUT.PUT_LINE('New Amount: 1000.00');
+        
+        COMMIT; -- Commit the transaction
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('No payment with PaymentID 1 found for updating.');
+    END IF;
+EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Error: Unable to update the payment.');
+        ROLLBACK; -- Rollback the transaction in case of an error
+END;
+/
+
+EXEC spPaymentsUpdate;
+
+ 
+
+/*******DELETE*******/
+
+CREATE OR REPLACE PROCEDURE spPaymentsDelete IS
+BEGIN
+    DELETE FROM Payments
+    WHERE PaymentID = 1; -- Change the condition as per your requirement
+    
+    IF SQL%ROWCOUNT > 0 THEN
+        DBMS_OUTPUT.PUT_LINE('Payment with PaymentID 1 has been deleted.');
+        COMMIT; -- Commit the transaction
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('No payment with PaymentID 1 found for deletion.');
+    END IF;
+EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Error: Unable to delete the payment.');
+        ROLLBACK; -- Rollback the transaction in case of an error
+END;
+/
+
+EXEC spPaymentsDelete;
+ 
+
+/******SELECT******/
+
+CREATE OR REPLACE PROCEDURE spPaymentsSelect IS
+BEGIN
+    FOR payment IN (SELECT * FROM Payments) LOOP
+        DBMS_OUTPUT.PUT_LINE('PaymentID: ' || payment.PaymentID);
+        DBMS_OUTPUT.PUT_LINE('ResidentID: ' || payment.ResidentID);
+        DBMS_OUTPUT.PUT_LINE('PaymentType: ' || payment.PaymentType);
+        DBMS_OUTPUT.PUT_LINE('Amount: ' || payment.Amount);
+        DBMS_OUTPUT.PUT_LINE('PaymentDate: ' || TO_CHAR(payment.PaymentDate, 'YYYY-MM-DD'));
+        DBMS_OUTPUT.PUT_LINE('---------------------------');
+    END LOOP;
+EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Error: Unable to retrieve payments.');
+END;
+/
+
+
+EXEC spPaymentsSelect;
+ 
